@@ -292,6 +292,44 @@
   }
 
   // Look up a product page's title, picture, and description using the free microlink.io service
+  // Amazon's site graphics (logos, Prime badges) live under /images/G/; product photos are under /images/I/
+  const isJunkImage = (u) => !u || /\/images\/G\/|prime_logo|amazon[-_ ]?logo|sprite|favicon|1x1|pixel\.gif/i.test(u);
+
+  function amazonAsin(u) {
+    const m = String(u || '').match(/\/(?:dp|gp\/product|gp\/aw\/d|exec\/obidos\/ASIN)\/([A-Z0-9]{10})/i);
+    return m ? m[1].toUpperCase() : '';
+  }
+
+  // Resolves to the URL if it loads as a real picture (not a 1x1 placeholder), else ''
+  function checkImage(u) {
+    return new Promise((ok) => {
+      if (!u) return ok('');
+      const i = new Image();
+      const t = setTimeout(() => ok(''), 8000);
+      i.onload = () => { clearTimeout(t); ok(i.naturalWidth >= 50 ? u : ''); };
+      i.onerror = () => { clearTimeout(t); ok(''); };
+      i.referrerPolicy = 'no-referrer';
+      i.src = u;
+    });
+  }
+
+  function biggestDynamicImage(json) {
+    // Amazon's data-a-dynamic-image is {"url": [w, h], ...}
+    try {
+      const entries = Object.entries(JSON.parse(json));
+      entries.sort((a, b) => (b[1][0] * b[1][1]) - (a[1][0] * a[1][1]));
+      return entries.length ? entries[0][0] : '';
+    } catch { return ''; }
+  }
+
+  function formatPrice(p, currency) {
+    const n = parseFloat(String(p || '').replace(/[^0-9.]/g, ''));
+    if (isNaN(n)) return '';
+    return (!currency || currency === 'USD' ? '$' : currency + ' ') + n.toFixed(2).replace(/\.00$/, '');
+  }
+
+  // Look up a product page's title, picture, and description using the free microlink.io service.
+  // force = the Fetch button was tapped, so replace the picture even if there is one.
   async function fetchDetails(force) {
     const url = $('fUrl').value.trim();
     if (!/^https?:\/\//i.test(url)) { toast('Paste a full link starting with https://', true); return; }
@@ -304,28 +342,62 @@
         'data.price.attr': 'content',
         'data.currency.selector': 'meta[property="product:price:currency"],meta[property="og:price:currency"],meta[itemprop="priceCurrency"]',
         'data.currency.attr': 'content',
+        // Amazon product pages
+        'data.amzTitle.selector': '#productTitle',
+        'data.amzHires.selector': '#landingImage,#imgBlkFront,#ebooksImgBlkFront,#main-image',
+        'data.amzHires.attr': 'data-old-hires',
+        'data.amzDynamic.selector': '#landingImage,#imgBlkFront,#ebooksImgBlkFront',
+        'data.amzDynamic.attr': 'data-a-dynamic-image',
+        'data.amzSrc.selector': '#landingImage,#imgBlkFront,#ebooksImgBlkFront,#main-image',
+        'data.amzSrc.attr': 'src',
+        'data.amzPrice.selector': '#corePrice_feature_div .a-offscreen,#corePriceDisplay_desktop_feature_div .a-offscreen,.a-price .a-offscreen',
       });
       const res = await fetch('https://api.microlink.io/?' + q);
       const j = await res.json();
       if (j.status !== 'success') throw new Error(j.message || 'lookup failed');
       const d = j.data || {};
-      const title = cleanTitle(d.title);
-      const blocked = /robot|captcha|access denied|page not found|sign in/i.test(title);
-      if (title && !blocked && (force || !$('fTitle').value)) $('fTitle').value = title;
-      if (d.description && !blocked && !$('fDesc').value) $('fDesc').value = d.description.slice(0, 280);
-      const img = d.image && d.image.url;
-      if (img && !blocked && (force || !$('fImgPreview').getAttribute('src'))) {
-        pendingPhoto = null;
-        $('fImage').value = img;
-        $('fImage').dataset.repoPath = '';
-        setImage(img);
+      const finalUrl = d.url || url;
+      const isAmazon = /(^|\.)amazon\.|(^|\/\/)a\.co\//i.test(finalUrl) || /(^|\/\/)(www\.)?a\.co\//i.test(url);
+
+      const title = cleanTitle(d.amzTitle || d.title);
+      const blocked = /robot|captcha|access denied|page not found|sign in|^amazon\.com$/i.test(title);
+      if (title && !blocked && !$('fTitle').value) $('fTitle').value = title;
+
+      // Description: skip Amazon's, which is just the page title again
+      let desc = d.description || '';
+      if (isAmazon || /^amazon\.com\s*:/i.test(desc) || cleanTitle(desc) === title) desc = '';
+      if (desc && !blocked && !$('fDesc').value) $('fDesc').value = desc.slice(0, 280);
+
+      // Picture: try the product's own image first, then the page's share image, then Amazon's by-ASIN image
+      const asin = amazonAsin(finalUrl) || amazonAsin(url);
+      const candidates = [
+        d.amzHires,
+        biggestDynamicImage(d.amzDynamic),
+        d.amzSrc,
+        d.image && d.image.url,
+        asin && `https://ws-na.amazon-adsystem.com/widgets/q?_encoding=UTF8&ASIN=${asin}&Format=_SL500_&ID=AsinImage&MarketPlace=US&ServiceVersion=20070822&WS=1`,
+      ].filter(u => u && /^https?:\/\//i.test(u) && !isJunkImage(u));
+      const currentImg = $('fImgPreview').getAttribute('src') || '';
+      if (!blocked && (force || !currentImg || isJunkImage(currentImg))) {
+        let img = '';
+        for (const c of candidates) { img = await checkImage(c); if (img) break; }
+        if (img) {
+          pendingPhoto = null;
+          $('fImage').value = img;
+          $('fImage').dataset.repoPath = '';
+          setImage(img);
+        } else if (isJunkImage(currentImg)) {
+          $('fImage').value = '';
+          setImage('');
+        }
       }
-      if (d.price && !$('fPrice').value) {
-        const n = parseFloat(d.price);
-        if (!isNaN(n)) $('fPrice').value = (!d.currency || d.currency === 'USD' ? '$' : d.currency + ' ') + n.toFixed(2).replace(/\.00$/, '');
+
+      if (!$('fPrice').value) $('fPrice').value = formatPrice(d.amzPrice || d.price, d.amzPrice ? '' : d.currency);
+      if (!$('fStore').value) {
+        $('fStore').value = isAmazon ? 'Amazon' : ((d.publisher && d.publisher.length < 30 ? d.publisher : '') || WL.domainOf(finalUrl));
       }
-      if (!$('fStore').value) $('fStore').value = (d.publisher && d.publisher.length < 30 ? d.publisher : '') || WL.domainOf(url);
       if (blocked || !title) toast("That store didn't share its details. Please type a name and snap a photo.", true);
+      else if (!$('fImgPreview').getAttribute('src')) toast('Got the name ✓ No picture found, so snap a photo or paste an image link.');
       else toast('Got the details ✓ Check them over, then tap Save.');
     } catch (e) {
       if (!$('fStore').value) $('fStore').value = WL.domainOf(url);
@@ -403,7 +475,7 @@
         url,
         image,
         store: $('fStore').value.trim() || WL.domainOf(url),
-        price: $('fPrice').value.trim(),
+        price: /^\d+(\.\d+)?$/.test($('fPrice').value.trim()) ? formatPrice($('fPrice').value) : $('fPrice').value.trim(),
         description: $('fDesc').value.trim(),
         priority: $('fPriority').value,
         added: old.added || today(),

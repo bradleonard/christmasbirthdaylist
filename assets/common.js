@@ -64,7 +64,7 @@ window.WL = (function () {
           <h3>${esc(item.title || 'Untitled')}</h3>
           ${item.description ? `<p class="desc">${esc(item.description)}</p>` : ''}
           <div class="foot">
-            <span class="price">${esc(item.price || '')}</span>
+            <span class="price">${esc(/^\d+(\.\d+)?$/.test(String(item.price || '').trim()) ? '$' + String(item.price).trim() : (item.price || ''))}</span>
             ${url ? `<a class="btn small" href="${esc(url)}" target="_blank" rel="noopener">View item ↗</a>` : ''}
           </div>
         </div>

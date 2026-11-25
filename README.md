@@ -30,7 +30,7 @@ Hosting is free with GitHub Pages. There's no server, database, or monthly cost.
 
 ### 3. Create a key so the editor can save
 1. Go to **GitHub → your profile picture → Settings → Developer settings → Personal access tokens → Fine-grained tokens → Generate new token**.
-2. Name it `wishlist editor`. For **Expiration**, choose the longest option (or "No expiration").
+2. Name it `wishlist editor`. For **Expiration**, choose **1 year**. Fine-grained tokens can't last longer than that, and a later custom date makes the Generate button silently do nothing.
 3. For **Repository access**, choose **Only select repositories** and pick `wishlist`.
 4. Under **Permissions → Repository permissions**, set **Contents** to **Read and write**.
 5. Click **Generate token** and copy it. It starts with `github_pat_`.
