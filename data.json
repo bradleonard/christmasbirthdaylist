@@ -41,18 +41,6 @@
       "added": "2026-11-25"
     },
     {
-      "id": "mwvvi0nnw6tq",
-      "list": "christmas",
-      "title": "Grinder X-Lock to 5/8-11\" Adapter",
-      "url": "https://a.co/d/02ez84tf",
-      "image": "images/mwvvi0nnw6tq-mwvvx1to.jpg",
-      "store": "amazon.com",
-      "price": "$20",
-      "description": "Buy Swozzto XLOCK to 5/8\"-11 Thread Adapter Kit with Quick Change Nut | Suitable for XLOCK Angle Grinders, Convert and Install Saw Blades, Polish Discs: Drill Adapters - Amazon.com ✓ FREE DELIVERY possible on eligible purchases",
-      "priority": "medium",
-      "added": "2026-11-25"
-    },
-    {
       "id": "mwvujzz785zv",
       "list": "christmas",
       "title": "Meross MS605 Human Presence Sensor Matter | Matter Over Thread, IP67 PIR & Light & mmWave Radar with AI Learning, Supports Home Assistant, Apple HomeKit, Alexa, Google",
@@ -61,6 +49,18 @@
       "store": "Amazon",
       "price": "$27.00",
       "description": "Meross MS605 Human Presence Sensor (Matter over Thread, mmWave radar). Works with Home Assistant, Apple HomeKit, Alexa, and Google.",
+      "priority": "medium",
+      "added": "2026-11-25"
+    },
+    {
+      "id": "mwvvi0nnw6tq",
+      "list": "christmas",
+      "title": "Grinder X-Lock to 5/8-11\" Adapter",
+      "url": "https://a.co/d/02ez84tf",
+      "image": "images/mwvvi0nnw6tq-mwvvx1to.jpg",
+      "store": "amazon.com",
+      "price": "$20",
+      "description": "Buy Swozzto XLOCK to 5/8\"-11 Thread Adapter Kit with Quick Change Nut | Suitable for XLOCK Angle Grinders, Convert and Install Saw Blades, Polish Discs: Drill Adapters - Amazon.com ✓ FREE DELIVERY possible on eligible purchases",
       "priority": "medium",
       "added": "2026-11-25"
     },
