@@ -77,18 +77,6 @@
       "added": "2026-11-25"
     },
     {
-      "id": "mwvxfbvwomdq",
-      "list": "christmas",
-      "title": "BOJACK 50 Values 1350 Pcs Resistor Kit 0 Ohm-5.6M Ohm with 1% 1/4W Metal Film Resistors Assortment: Amazon.com",
-      "url": "https://a.co/d/0fci8Ht2",
-      "image": "images/mwvxfbvwomdq-mwvxfbvw.jpg",
-      "store": "a.co",
-      "price": "$13",
-      "description": "BOJACK 50 Values 1350 Pcs Resistor Kit 0 Ohm-5.6M Ohm with 1% 1/4W Metal Film Resistors Assortment: Amazon.com: Industrial & Scientific",
-      "priority": "medium",
-      "added": "2026-11-25"
-    },
-    {
       "id": "mwvx79qzmcsd",
       "list": "christmas",
       "title": "Liquid Solder Flux Dropper (30 ml/1 Oz.) I RMA Liquid Solder Flux I Soldering Flux I",
@@ -97,6 +85,18 @@
       "store": "amazon.com",
       "price": "$7",
       "description": "",
+      "priority": "medium",
+      "added": "2026-11-25"
+    },
+    {
+      "id": "mwvxfbvwomdq",
+      "list": "christmas",
+      "title": "BOJACK 50 Values 1350 Pcs Resistor Kit 0 Ohm-5.6M Ohm with 1% 1/4W Metal Film Resistors Assortment: Amazon.com",
+      "url": "https://a.co/d/0fci8Ht2",
+      "image": "images/mwvxfbvwomdq-mwvxfbvw.jpg",
+      "store": "a.co",
+      "price": "$13",
+      "description": "BOJACK 50 Values 1350 Pcs Resistor Kit 0 Ohm-5.6M Ohm with 1% 1/4W Metal Film Resistors Assortment: Amazon.com: Industrial & Scientific",
       "priority": "medium",
       "added": "2026-11-25"
     },
