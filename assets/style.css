@@ -1,37 +1,47 @@
 :root {
-  --bg: #f7f3ec;
-  --card: #ffffff;
-  --ink: #1f2421;
-  --muted: #6b716d;
-  --line: #e4ddd1;
-  --accent: #1f5f45;
-  --accent-ink: #ffffff;
-  --accent-soft: #e3efe8;
-  --pop: #b3262d;
+  /* Christmas: warm cream, cranberry, forest green and gold */
+  --bg: #f6ecdd;
+  --bg-glow: #fbe3c4;
+  --card: #fffaf2;
+  --field: #fffdf9;
+  --ink: #2e1f17;
+  --muted: #7d6656;
+  --line: #e9d8c1;
+  --accent: #9c2f25;
+  --accent-ink: #fff8f0;
+  --accent-soft: #f3e0cc;
+  --pop: #2f5a3c;
+  --badge: #94600f;
   --radius: 14px;
-  --shadow: 0 1px 2px rgba(0,0,0,.05), 0 6px 20px rgba(0,0,0,.06);
+  --shadow: 0 1px 2px rgba(80,40,10,.06), 0 8px 24px rgba(80,40,10,.08);
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 }
 body[data-theme="birthday"] {
-  --bg: #f6f3fb;
-  --line: #e3dcf0;
-  --accent: #5b3fb8;
-  --accent-soft: #ece6fa;
-  --pop: #e0457b;
+  /* Birthday: peach, terracotta and marigold */
+  --bg: #fcefe6;
+  --bg-glow: #ffd9c2;
+  --line: #f0d6c6;
+  --accent: #c2492b;
+  --accent-soft: #fbe0d2;
+  --pop: #9a4424;
+  --badge: #a4600a;
 }
 body[data-theme="plain"] {
-  --bg: #f4f5f7;
-  --line: #e1e4e8;
-  --accent: #2b4c7e;
-  --accent-soft: #e4ebf5;
-  --pop: #c2571a;
+  /* Simple: oatmeal, walnut and rust */
+  --bg: #f3ede4;
+  --bg-glow: #ece0cf;
+  --line: #e2d6c6;
+  --accent: #6e4a2e;
+  --accent-soft: #ece1d3;
+  --pop: #a5512b;
+  --badge: #a5512b;
 }
 
 * { box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; }
 body {
   margin: 0;
-  background: var(--bg);
+  background: radial-gradient(ellipse 90% 420px at 50% 0, var(--bg-glow), transparent 75%) no-repeat, var(--bg);
   color: var(--ink);
   line-height: 1.5;
   min-height: 100vh;
@@ -176,7 +186,7 @@ img { max-width: 100%; display: block; }
   position: absolute;
   top: 10px;
   left: 10px;
-  background: var(--pop);
+  background: var(--badge);
   color: #fff;
   font-size: .72rem;
   font-weight: 700;
@@ -205,7 +215,7 @@ img { max-width: 100%; display: block; }
 }
 .btn:hover { filter: brightness(1.08); }
 .btn.secondary { background: var(--card); color: var(--ink); border-color: var(--line); }
-.btn.danger { background: #fff; color: #b42318; border-color: #f1c4bf; }
+.btn.danger { background: var(--field); color: #b42318; border-color: #f1c4bf; }
 .btn.small { padding: 6px 10px; font-size: .85rem; }
 .btn:disabled { opacity: .5; cursor: not-allowed; }
 
@@ -258,7 +268,7 @@ footer.site {
   padding: 10px 12px;
   border-radius: 10px;
   border: 1px solid var(--line);
-  background: #fff;
+  background: var(--field);
   color: var(--ink);
   width: 100%;
 }
@@ -318,8 +328,8 @@ footer.site {
   left: 50%;
   bottom: 20px;
   transform: translateX(-50%);
-  background: #1f2421;
-  color: #fff;
+  background: #2e1f17;
+  color: #fff8f0;
   padding: 10px 16px;
   border-radius: 10px;
   font-size: .92rem;
@@ -335,10 +345,11 @@ dialog {
   padding: 0;
   width: min(560px, calc(100% - 24px));
   max-height: calc(100vh - 24px);
-  box-shadow: 0 20px 60px rgba(0,0,0,.3);
+  box-shadow: 0 20px 60px rgba(60,30,10,.3);
   color: var(--ink);
+  background: var(--card);
 }
-dialog::backdrop { background: rgba(20, 20, 20, .45); }
+dialog::backdrop { background: rgba(46, 26, 14, .45); }
 dialog .dlg-head {
   display: flex;
   align-items: center;
@@ -347,7 +358,7 @@ dialog .dlg-head {
   border-bottom: 1px solid var(--line);
   position: sticky;
   top: 0;
-  background: #fff;
+  background: var(--card);
   z-index: 1;
 }
 dialog .dlg-head h2 { margin: 0; font-size: 1.1rem; }
@@ -360,7 +371,7 @@ dialog .dlg-foot {
   border-top: 1px solid var(--line);
   position: sticky;
   bottom: 0;
-  background: #fff;
+  background: var(--card);
 }
 #scanner { width: 100%; min-height: 240px; background: #111; border-radius: 10px; overflow: hidden; }
 
