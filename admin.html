@@ -6,12 +6,12 @@
   <title>Edit Wish List</title>
   <meta name="robots" content="noindex">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✏️</text></svg>">
-  <link rel="stylesheet" href="assets/style.css?v=5">
+  <link rel="stylesheet" href="assets/style.css?v=6">
 </head>
 <body data-theme="christmas">
   <div class="topbar">
     <div class="wrap">
-      <h1>🎁 My list <small style="font-weight:400;font-size:.7rem;color:var(--muted)">v5</small></h1>
+      <h1>🎁 My list <small style="font-weight:400;font-size:.7rem;color:var(--muted)">v6</small></h1>
       <div class="actions">
         <a class="btn secondary small" href="./" target="_blank">View ↗</a>
         <button class="btn secondary small" id="shareBtn">Share</button>
@@ -47,7 +47,7 @@
       <div class="quick">
         <button class="btn secondary" id="qLink"><span class="ico">🔗</span>Paste a link</button>
         <button class="btn secondary" id="qScan"><span class="ico">▥</span>Scan barcode</button>
-        <button class="btn secondary" id="qPhoto"><span class="ico">📷</span>Snap a photo</button>
+        <button class="btn secondary" id="qPhoto"><span class="ico">📷</span>Photo or screenshot</button>
       </div>
       <div class="admin-list" id="items"></div>
       <p class="empty hidden" id="empty">No items on this list yet. Tap <b>Add item</b> to get started.</p>
@@ -89,12 +89,13 @@
           <label>Picture</label>
           <img id="fImgPreview" class="preview-img hidden" alt="">
           <div class="inline" style="flex-wrap:wrap">
-            <button type="button" class="btn secondary small" id="photoBtn">📷 Take / choose photo</button>
+            <button type="button" class="btn secondary small" id="photoBtn">📷 Photo / screenshot</button>
+            <button type="button" class="btn secondary small" id="pasteImgBtn">📋 Paste picture</button>
             <button type="button" class="btn secondary small" id="findImgBtn">🔍 Find picture</button>
             <button type="button" class="btn secondary small" id="scanBtn2">▥ Scan barcode</button>
             <button type="button" class="btn secondary small hidden" id="clearImgBtn">Remove picture</button>
           </div>
-          <input id="fImage" placeholder="…or paste an image link" style="margin-top:8px" autocapitalize="off" autocorrect="off">
+          <input id="fImage" placeholder="…or paste an image link (or a copied picture)" style="margin-top:8px" autocapitalize="off" autocorrect="off">
         </div>
         <div class="row">
           <div class="field"><label for="fList">List</label><select id="fList"></select></div>
@@ -146,12 +147,12 @@
     </form>
   </dialog>
 
-  <input type="file" id="photoInput" accept="image/*" capture="environment" class="hidden">
-  <input type="file" id="barcodeFileInput" accept="image/*" capture="environment" class="hidden">
+  <input type="file" id="photoInput" accept="image/*" class="hidden">
+  <input type="file" id="barcodeFileInput" accept="image/*" class="hidden">
   <div class="status hidden" id="status"></div>
 
   <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
-  <script src="assets/common.js?v=5"></script>
-  <script src="assets/admin.js?v=5"></script>
+  <script src="assets/common.js?v=6"></script>
+  <script src="assets/admin.js?v=6"></script>
 </body>
 </html>

@@ -493,20 +493,78 @@
 
   // ---------- photos ----------
   $('photoBtn').addEventListener('click', () => $('photoInput').click());
-  $('photoInput').addEventListener('change', async (e) => {
-    const file = e.target.files[0];
-    e.target.value = '';
-    if (!file) return;
+  async function usePictureFile(file) {
+    if (!file || !/^image\//.test(file.type || 'image/')) { toast("That isn't a picture.", true); return; }
     try {
       const dataUrl = await resizeImage(file, 1000);
       pendingPhoto = { dataUrl, base64: dataUrl.split(',')[1] };
       $('fImage').value = '';
       $('fImage').dataset.repoPath = '';
       setImage(dataUrl);
+      toast('Picture added ✓ Tap Save when ready.');
     } catch {
-      toast("Couldn't read that photo. Try a different one.", true);
+      toast("Couldn't read that picture. Try a different one.", true);
+    }
+  }
+
+  $('photoInput').addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    e.target.value = '';
+    if (file) usePictureFile(file);
+  });
+
+  const imageFromList = (items) => {
+    for (const it of items || []) {
+      if (it.kind === 'file' && /^image\//.test(it.type)) return it.getAsFile();
+    }
+    return null;
+  };
+
+  // Ctrl+V / Cmd+V / long-press Paste with a copied picture or screenshot.
+  // Works in the add/edit window, or on the main page (it opens a new item).
+  document.addEventListener('paste', (e) => {
+    const file = imageFromList(e.clipboardData && e.clipboardData.items);
+    if (!file) return;
+    if (document.querySelector('#scanDlg[open], #settingsDlg[open]')) return;
+    e.preventDefault();
+    if (!itemDlg.open) openItem(null);
+    usePictureFile(file);
+  });
+
+  // 📋 Paste picture button (asks the browser for what's on the clipboard)
+  $('pasteImgBtn').addEventListener('click', async () => {
+    if (!navigator.clipboard || !navigator.clipboard.read) {
+      toast('Your browser needs you to paste instead: tap in the image link box and choose Paste (or press Ctrl+V).', true);
+      $('fImage').focus();
+      return;
+    }
+    try {
+      for (const item of await navigator.clipboard.read()) {
+        const type = item.types.find(t => t.startsWith('image/'));
+        if (type) {
+          const blob = await item.getType(type);
+          return usePictureFile(new File([blob], 'pasted', { type }));
+        }
+      }
+      toast('No picture on the clipboard. Copy a screenshot or image first.', true);
+    } catch {
+      toast('Couldn\'t read the clipboard. Tap in the image link box and choose Paste (or press Ctrl+V).', true);
+      $('fImage').focus();
     }
   });
+
+  // Drag and drop a picture onto the editor (computer)
+  ['dragover', 'drop'].forEach(type => document.addEventListener(type, (e) => {
+    const dt = e.dataTransfer;
+    if (!dt || !Array.from(dt.types || []).includes('Files')) return;
+    e.preventDefault();
+    if (type === 'drop') {
+      const file = Array.from(dt.files).find(f => /^image\//.test(f.type));
+      if (!file) return;
+      if (!itemDlg.open) openItem(null);
+      usePictureFile(file);
+    }
+  }));
 
   async function resizeImage(file, max) {
     const url = URL.createObjectURL(file);
