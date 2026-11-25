@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Wish List</title>
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎁</text></svg>">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body data-theme="christmas">
+  <header class="hero wrap">
+    <p class="eyebrow" id="eyebrow"></p>
+    <h1 id="title">Wish List</h1>
+    <p class="note" id="note"></p>
+  </header>
+
+  <main class="wrap">
+    <nav class="tabs" id="tabs"></nav>
+    <div class="filters" id="filters">
+      <label for="sort">Sort by</label>
+      <select id="sort">
+        <option value="priority">Most wanted first</option>
+        <option value="price-asc">Price: low to high</option>
+        <option value="price-desc">Price: high to low</option>
+        <option value="newest">Newest added</option>
+      </select>
+    </div>
+    <section class="grid" id="grid"></section>
+    <p class="empty hidden" id="empty">Nothing on this list yet. Check back soon!</p>
+  </main>
+
+  <footer class="site" id="updated"></footer>
+
+  <script src="assets/common.js"></script>
+  <script>
+    (async function () {
+      const $ = (id) => document.getElementById(id);
+      let data;
+      try {
+        const res = await fetch('data.json?v=' + Date.now(), { cache: 'no-store' });
+        data = await res.json();
+      } catch (e) {
+        $('title').textContent = 'Could not load the list';
+        return;
+      }
+
+      const params = new URLSearchParams(location.search);
+      const listId = params.get('list') || data.activeList || (data.lists[0] && data.lists[0].id);
+      const list = data.lists.find(l => l.id === listId) || data.lists[0];
+      const sortSel = $('sort');
+      sortSel.value = params.get('sort') || 'priority';
+
+      document.body.dataset.theme = list.theme || 'plain';
+      const name = (data.name || '').trim();
+      $('eyebrow').textContent = name ? name + "'s" : '';
+      $('title').textContent = list.title;
+      $('note').textContent = list.note || '';
+      document.title = (name ? name + "'s " : '') + list.title;
+
+      // Tabs only for lists that actually have items
+      const withItems = data.lists.filter(l => data.items.some(i => i.list === l.id));
+      if (withItems.length > 1) {
+        $('tabs').innerHTML = withItems.map(l =>
+          `<a href="?list=${encodeURIComponent(l.id)}" class="${l.id === list.id ? 'active' : ''}">${WL.esc(l.title)}</a>`
+        ).join('');
+      }
+
+      function render() {
+        const items = WL.sortItems(data.items.filter(i => i.list === list.id), sortSel.value);
+        $('grid').innerHTML = items.map(WL.cardHTML).join('');
+        $('empty').classList.toggle('hidden', items.length > 0);
+        $('filters').classList.toggle('hidden', items.length < 2);
+      }
+      sortSel.addEventListener('change', render);
+      render();
+
+      const dates = data.items.map(i => i.added).filter(Boolean).sort();
+      if (dates.length) $('updated').textContent = 'Last item added ' + WL.niceDate(dates[dates.length - 1]);
+    })();
+  </script>
+</body>
+</html>

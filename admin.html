@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Edit Wish List</title>
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✏️</text></svg>">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body data-theme="christmas">
+  <div class="topbar">
+    <div class="wrap">
+      <h1>🎁 My list</h1>
+      <div class="actions">
+        <a class="btn secondary small" href="./" target="_blank">View ↗</a>
+        <button class="btn secondary small" id="shareBtn">Share</button>
+        <button class="btn secondary small" id="settingsBtn">⚙︎ Settings</button>
+      </div>
+    </div>
+  </div>
+
+  <main class="wrap">
+    <!-- First-time setup -->
+    <section class="panel hidden" id="setup">
+      <h2>Connect to GitHub (one-time per device)</h2>
+      <p class="help">The editor saves your changes straight to your GitHub repository. Paste a token below and it stays saved on this device only. The README has the steps for creating a token.</p>
+      <div class="row">
+        <div class="field"><label for="cfgOwner">GitHub username</label><input id="cfgOwner" autocapitalize="off" autocorrect="off"></div>
+        <div class="field"><label for="cfgRepo">Repository name</label><input id="cfgRepo" autocapitalize="off" autocorrect="off"></div>
+      </div>
+      <div class="row">
+        <div class="field"><label for="cfgBranch">Branch</label><input id="cfgBranch" value="main" autocapitalize="off" autocorrect="off"></div>
+        <div class="field"><label for="cfgToken">Access token</label><input id="cfgToken" type="password" autocomplete="off" placeholder="github_pat_…"></div>
+      </div>
+      <button class="btn" id="connectBtn">Connect</button>
+    </section>
+
+    <section class="panel" id="editor">
+      <div class="inline" style="align-items:center; justify-content:space-between; flex-wrap:wrap; margin-bottom:12px">
+        <div class="field" style="margin:0; flex:1; min-width:180px">
+          <label for="listSel">Editing list</label>
+          <select id="listSel"></select>
+        </div>
+        <button class="btn" id="addBtn" style="align-self:flex-end">＋ Add item</button>
+      </div>
+      <div class="quick">
+        <button class="btn secondary" id="qLink"><span class="ico">🔗</span>Paste a link</button>
+        <button class="btn secondary" id="qScan"><span class="ico">▥</span>Scan barcode</button>
+        <button class="btn secondary" id="qPhoto"><span class="ico">📷</span>Snap a photo</button>
+      </div>
+      <div class="admin-list" id="items"></div>
+      <p class="empty hidden" id="empty">No items on this list yet. Tap <b>Add item</b> to get started.</p>
+    </section>
+  </main>
+
+  <!-- Add / edit item -->
+  <dialog id="itemDlg">
+    <form method="dialog" id="itemForm">
+      <div class="dlg-head"><h2 id="itemDlgTitle">Add item</h2><button class="btn secondary small" value="cancel" formnovalidate>✕</button></div>
+      <div class="dlg-body">
+        <div class="field">
+          <label for="fUrl">Product link</label>
+          <div class="inline">
+            <input id="fUrl" type="url" inputmode="url" placeholder="Paste a link from any store" autocapitalize="off" autocorrect="off">
+            <button type="button" class="btn secondary" id="fetchBtn">Fetch</button>
+          </div>
+        </div>
+        <div class="field">
+          <label for="fTitle">Name</label>
+          <input id="fTitle" required placeholder="What is it?">
+        </div>
+        <div class="row">
+          <div class="field"><label for="fPrice">Price</label><input id="fPrice" placeholder="$25"></div>
+          <div class="field">
+            <label for="fPriority">How much do you want it?</label>
+            <select id="fPriority">
+              <option value="high">Top pick ★</option>
+              <option value="medium" selected>Would love it</option>
+              <option value="low">Nice to have</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label for="fDesc">Description / notes</label>
+          <textarea id="fDesc" placeholder="Size, color, model, any store is fine…"></textarea>
+        </div>
+        <div class="field">
+          <label>Picture</label>
+          <img id="fImgPreview" class="preview-img hidden" alt="">
+          <div class="inline" style="flex-wrap:wrap">
+            <button type="button" class="btn secondary small" id="photoBtn">📷 Take / choose photo</button>
+            <button type="button" class="btn secondary small" id="scanBtn2">▥ Scan barcode</button>
+            <button type="button" class="btn secondary small hidden" id="clearImgBtn">Remove picture</button>
+          </div>
+          <input id="fImage" placeholder="…or paste an image link" style="margin-top:8px" autocapitalize="off" autocorrect="off">
+        </div>
+        <div class="row">
+          <div class="field"><label for="fList">List</label><select id="fList"></select></div>
+          <div class="field"><label for="fStore">Store (optional)</label><input id="fStore" placeholder="auto from link"></div>
+        </div>
+      </div>
+      <div class="dlg-foot">
+        <button type="button" class="btn danger hidden" id="deleteBtn">Delete</button>
+        <span></span>
+        <button class="btn" value="save" id="saveBtn">Save</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Barcode scanner -->
+  <dialog id="scanDlg">
+    <div class="dlg-head"><h2>Scan a barcode</h2><button class="btn secondary small" id="scanClose">✕</button></div>
+    <div class="dlg-body">
+      <div id="scanner"></div>
+      <p class="help" id="scanMsg" style="color:var(--muted); font-size:.9rem">Point your camera at the barcode on the box.</p>
+      <div class="inline" style="flex-wrap:wrap">
+        <button class="btn secondary small" id="scanFileBtn">Use a photo of the barcode instead</button>
+      </div>
+      <div class="field" style="margin-top:12px">
+        <label for="manualCode">…or type the numbers under the barcode</label>
+        <div class="inline"><input id="manualCode" inputmode="numeric"><button class="btn secondary" id="manualGo">Look up</button></div>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- Settings -->
+  <dialog id="settingsDlg">
+    <form method="dialog" id="settingsForm">
+      <div class="dlg-head"><h2>Settings</h2><button class="btn secondary small" value="cancel" formnovalidate>✕</button></div>
+      <div class="dlg-body">
+        <div class="field"><label for="sName">Your name (shown on the list)</label><input id="sName"></div>
+        <div class="field">
+          <label for="sActive">List family sees first</label>
+          <select id="sActive"></select>
+        </div>
+        <label style="font-size:.85rem; font-weight:600">Your lists</label>
+        <p class="help" style="color:var(--muted); font-size:.85rem; margin:2px 0 8px">Title, color theme, and an optional message shown at the top.</p>
+        <div id="listsEdit"></div>
+        <button type="button" class="btn secondary small" id="addListBtn">＋ Add another list</button>
+        <hr style="border:none; border-top:1px solid var(--line); margin:18px 0">
+        <button type="button" class="btn secondary small" id="disconnectBtn">Disconnect this device from GitHub</button>
+      </div>
+      <div class="dlg-foot"><span></span><button class="btn" value="save">Save settings</button></div>
+    </form>
+  </dialog>
+
+  <input type="file" id="photoInput" accept="image/*" capture="environment" class="hidden">
+  <input type="file" id="barcodeFileInput" accept="image/*" capture="environment" class="hidden">
+  <div class="status hidden" id="status"></div>
+
+  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+  <script src="assets/common.js"></script>
+  <script src="assets/admin.js"></script>
+</body>
+</html>
