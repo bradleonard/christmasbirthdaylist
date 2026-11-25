@@ -53,18 +53,6 @@
       "added": "2026-11-25"
     },
     {
-      "id": "mwvv880bjyu6",
-      "list": "christmas",
-      "title": "Drive Socket Adapter Set",
-      "url": "https://www.homedepot.com/p/Husky-1-4-in-Drive-Impact-Driver-Socket-Adapter-Set-6-Piece-HISKDRAPT6PC/309495870",
-      "image": "images/mwvv880bjyu6-mwvvy5xd.jpg",
-      "store": "homedepot.com",
-      "price": "$8",
-      "description": "",
-      "priority": "medium",
-      "added": "2026-11-25"
-    },
-    {
       "id": "mwvujzz785zv",
       "list": "christmas",
       "title": "Meross MS605 Human Presence Sensor Matter | Matter Over Thread, IP67 PIR & Light & mmWave Radar with AI Learning, Supports Home Assistant, Apple HomeKit, Alexa, Google",
@@ -73,6 +61,18 @@
       "store": "Amazon",
       "price": "$27.00",
       "description": "Meross MS605 Human Presence Sensor (Matter over Thread, mmWave radar). Works with Home Assistant, Apple HomeKit, Alexa, and Google.",
+      "priority": "medium",
+      "added": "2026-11-25"
+    },
+    {
+      "id": "mwvv880bjyu6",
+      "list": "christmas",
+      "title": "Drive Socket Adapter Set",
+      "url": "https://www.homedepot.com/p/Husky-1-4-in-Drive-Impact-Driver-Socket-Adapter-Set-6-Piece-HISKDRAPT6PC/309495870",
+      "image": "images/mwvv880bjyu6-mwvvy5xd.jpg",
+      "store": "homedepot.com",
+      "price": "$8",
+      "description": "",
       "priority": "medium",
       "added": "2026-11-25"
     },
