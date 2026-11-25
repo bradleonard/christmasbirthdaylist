@@ -17,18 +17,6 @@
   ],
   "items": [
     {
-      "id": "mwvxfbvwomdq",
-      "list": "christmas",
-      "title": "BOJACK 50 Values 1350 Pcs Resistor Kit 0 Ohm-5.6M Ohm with 1% 1/4W Metal Film Resistors Assortment: Amazon.com",
-      "url": "https://a.co/d/0fci8Ht2",
-      "image": "images/mwvxfbvwomdq-mwvxfbvw.jpg",
-      "store": "a.co",
-      "price": "$13",
-      "description": "BOJACK 50 Values 1350 Pcs Resistor Kit 0 Ohm-5.6M Ohm with 1% 1/4W Metal Film Resistors Assortment: Amazon.com: Industrial & Scientific",
-      "priority": "medium",
-      "added": "2026-11-25"
-    },
-    {
       "id": "mwvxc6tn1m4d",
       "list": "christmas",
       "title": "Beduan Brass Electric Solenoid Valve, 1/2\" 110V Air Valve",
@@ -37,6 +25,18 @@
       "store": "a.co",
       "price": "$27",
       "description": "Air compressor automated shutoff",
+      "priority": "medium",
+      "added": "2026-11-25"
+    },
+    {
+      "id": "mwvxfbvwomdq",
+      "list": "christmas",
+      "title": "BOJACK 50 Values 1350 Pcs Resistor Kit 0 Ohm-5.6M Ohm with 1% 1/4W Metal Film Resistors Assortment: Amazon.com",
+      "url": "https://a.co/d/0fci8Ht2",
+      "image": "images/mwvxfbvwomdq-mwvxfbvw.jpg",
+      "store": "a.co",
+      "price": "$13",
+      "description": "BOJACK 50 Values 1350 Pcs Resistor Kit 0 Ohm-5.6M Ohm with 1% 1/4W Metal Film Resistors Assortment: Amazon.com: Industrial & Scientific",
       "priority": "medium",
       "added": "2026-11-25"
     },
