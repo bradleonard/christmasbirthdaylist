@@ -65,18 +65,6 @@
       "added": "2026-11-25"
     },
     {
-      "id": "mwvv3ko2vsvb",
-      "list": "christmas",
-      "title": "Vice Grip Clamp for Kreig Pocket Hole Jig",
-      "url": "https://www.amazon.com/dp/B07ZTVYYT1/?coliid=IK73LHRCCUT63&colid=37WIZ4RGG6MGG&th=1",
-      "image": "https://m.media-amazon.com/images/I/61vC1op9snL._AC_SL1000_.jpg",
-      "store": "Amazon",
-      "price": "$21",
-      "description": "Amazon Basics Adjustable Metal Face Clamps for Woodworking, Welding, or Repairs, 3-inch Jaw Reach, 2-Pack, Black/Silver - Amazon.com",
-      "priority": "medium",
-      "added": "2026-11-25"
-    },
-    {
       "id": "mwvujzz785zv",
       "list": "christmas",
       "title": "Meross MS605 Human Presence Sensor Matter | Matter Over Thread, IP67 PIR & Light & mmWave Radar with AI Learning, Supports Home Assistant, Apple HomeKit, Alexa, Google",
@@ -85,6 +73,18 @@
       "store": "Amazon",
       "price": "$27.00",
       "description": "Meross MS605 Human Presence Sensor (Matter over Thread, mmWave radar). Works with Home Assistant, Apple HomeKit, Alexa, and Google.",
+      "priority": "medium",
+      "added": "2026-11-25"
+    },
+    {
+      "id": "mwvv3ko2vsvb",
+      "list": "christmas",
+      "title": "Vice Grip Clamp for Kreig Pocket Hole Jig",
+      "url": "https://www.amazon.com/dp/B07ZTVYYT1/?coliid=IK73LHRCCUT63&colid=37WIZ4RGG6MGG&th=1",
+      "image": "https://m.media-amazon.com/images/I/61vC1op9snL._AC_SL1000_.jpg",
+      "store": "Amazon",
+      "price": "$21",
+      "description": "Amazon Basics Adjustable Metal Face Clamps for Woodworking, Welding, or Repairs, 3-inch Jaw Reach, 2-Pack, Black/Silver - Amazon.com",
       "priority": "medium",
       "added": "2026-11-25"
     }
