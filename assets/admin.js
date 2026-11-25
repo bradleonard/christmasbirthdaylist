@@ -344,11 +344,11 @@
         'data.currency.attr': 'content',
         // Amazon product pages
         'data.amzTitle.selector': '#productTitle',
-        'data.amzHires.selector': '#landingImage,#imgBlkFront,#ebooksImgBlkFront,#main-image',
+        'data.amzHires.selector': '#landingImage,#imgBlkFront,#ebooksImgBlkFront,#main-image,img[data-a-image-name="landingImage"],#imgTagWrapperId img',
         'data.amzHires.attr': 'data-old-hires',
-        'data.amzDynamic.selector': '#landingImage,#imgBlkFront,#ebooksImgBlkFront',
+        'data.amzDynamic.selector': '#landingImage,#imgBlkFront,#ebooksImgBlkFront,img[data-a-image-name="landingImage"],#imgTagWrapperId img',
         'data.amzDynamic.attr': 'data-a-dynamic-image',
-        'data.amzSrc.selector': '#landingImage,#imgBlkFront,#ebooksImgBlkFront,#main-image',
+        'data.amzSrc.selector': '#landingImage,#imgBlkFront,#ebooksImgBlkFront,#main-image,img[data-a-image-name="landingImage"],#imgTagWrapperId img,#main-image-container img',
         'data.amzSrc.attr': 'src',
         'data.amzPrice.selector': '#corePrice_feature_div .a-offscreen,#corePriceDisplay_desktop_feature_div .a-offscreen,.a-price .a-offscreen',
       });
