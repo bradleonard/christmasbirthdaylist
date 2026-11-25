@@ -287,11 +287,10 @@
       .replace(/^Amazon\.com\s*:\s*/i, '')
       .replace(/\s*:\s*[^:]{2,40}$/, m => (/amazon/i.test(t) ? '' : m)) // drop Amazon's " : Category" tail
       .replace(/\s+\|\s+[^|]{2,30}$/, '') // "Product | Store"
-      .replace(/\s*[–-]\s*(Target|Walmart\.com|Best Buy|Etsy|REI Co-op)\s*$/i, '')
+      .replace(/\s*[–-]\s*(Target|Walmart\.com|Best Buy|Etsy|REI Co-op|The Home Depot|Home Depot|Lowe's|Lowes\.com|Costco|Kohl's|Macy's)\s*$/i, '')
       .trim();
   }
 
-  // Look up a product page's title, picture, and description using the free microlink.io service
   // Amazon's site graphics (logos, Prime badges) live under /images/G/; product photos are under /images/I/
   const isJunkImage = (u) => !u || /\/images\/G\/|prime_logo|amazon[-_ ]?logo|sprite|favicon|1x1|pixel\.gif/i.test(u);
 
@@ -328,57 +327,128 @@
     return (!currency || currency === 'USD' ? '$' : currency + ' ') + n.toFixed(2).replace(/\.00$/, '');
   }
 
-  // Look up a product page's title, picture, and description using the free microlink.io service.
+  // Many store links contain the product name, e.g. homedepot.com/p/DEWALT-20V-Drill-DCD771C2/204279858
+  function titleFromUrl(u) {
+    let path;
+    try { path = new URL(u).pathname; } catch { return ''; }
+    const pats = [
+      /\/p\/([^/]+)\/\d+/,            // Home Depot, Target (/p/slug/-/A-123)
+      /\/pd\/([^/]+)\/\d+/,           // Lowe's
+      /\/ip\/([^/]+)\/\d+/,           // Walmart
+      /\/site\/([^/]+)\/\d+\.p/,      // Best Buy
+      /\/listing\/\d+\/([^/]+)/,      // Etsy
+      /\/([^/]+)\/dp\/[A-Z0-9]{10}/i, // Amazon
+      /\/product\/([^/]+)/,           // many shops
+      /\/products\/([^/]+)/,          // Shopify stores
+    ];
+    for (const re of pats) {
+      const m = path.match(re);
+      if (m && /[a-z]/i.test(m[1]) && m[1] !== '-') {
+        return decodeURIComponent(m[1]).replace(/[-_+]+/g, ' ').replace(/\s+/g, ' ').trim();
+      }
+    }
+    return '';
+  }
+
+  const looksBlocked = (t) => /robot|captcha|access denied|denied|forbidden|page not found|sign in|just a moment|attention required|are you a human|^amazon\.com$|^error/i.test(t || '');
+
+  // Source 1: microlink.io (free, ~50 lookups/day)
+  async function fromMicrolink(url) {
+    const q = new URLSearchParams({
+      url,
+      'data.price.selector': 'meta[property="product:price:amount"],meta[property="og:price:amount"],meta[itemprop="price"]',
+      'data.price.attr': 'content',
+      'data.currency.selector': 'meta[property="product:price:currency"],meta[property="og:price:currency"],meta[itemprop="priceCurrency"]',
+      'data.currency.attr': 'content',
+      // Amazon product pages
+      'data.amzTitle.selector': '#productTitle',
+      'data.amzHires.selector': '#landingImage,#imgBlkFront,#ebooksImgBlkFront,#main-image,img[data-a-image-name="landingImage"],#imgTagWrapperId img',
+      'data.amzHires.attr': 'data-old-hires',
+      'data.amzDynamic.selector': '#landingImage,#imgBlkFront,#ebooksImgBlkFront,img[data-a-image-name="landingImage"],#imgTagWrapperId img',
+      'data.amzDynamic.attr': 'data-a-dynamic-image',
+      'data.amzSrc.selector': '#landingImage,#imgBlkFront,#ebooksImgBlkFront,#main-image,img[data-a-image-name="landingImage"],#imgTagWrapperId img,#main-image-container img',
+      'data.amzSrc.attr': 'src',
+      'data.amzPrice.selector': '#corePrice_feature_div .a-offscreen,#corePriceDisplay_desktop_feature_div .a-offscreen,.a-price .a-offscreen',
+    });
+    const res = await fetch('https://api.microlink.io/?' + q);
+    const j = await res.json();
+    if (j.status !== 'success') throw new Error(j.message || 'lookup failed');
+    const d = j.data || {};
+    const finalUrl = d.url || url;
+    const isAmazon = /(^|\.)amazon\.|(^|\/\/)(www\.)?a\.co\//i.test(finalUrl) || /(^|\/\/)(www\.)?a\.co\//i.test(url);
+    const title = cleanTitle(d.amzTitle || d.title);
+    let desc = d.description || '';
+    if (isAmazon || /^amazon\.com\s*:/i.test(desc) || cleanTitle(desc) === title) desc = '';
+    const asin = amazonAsin(finalUrl) || amazonAsin(url);
+    return {
+      blocked: looksBlocked(title) || looksBlocked(desc),
+      finalUrl, isAmazon, title, desc,
+      images: [
+        d.amzHires,
+        biggestDynamicImage(d.amzDynamic),
+        d.amzSrc,
+        d.image && d.image.url,
+        asin && `https://ws-na.amazon-adsystem.com/widgets/q?_encoding=UTF8&ASIN=${asin}&Format=_SL500_&ID=AsinImage&MarketPlace=US&ServiceVersion=20070822&WS=1`,
+      ],
+      price: formatPrice(d.amzPrice || d.price, d.amzPrice ? '' : d.currency),
+      store: isAmazon ? 'Amazon' : ((d.publisher && d.publisher.length < 30 ? d.publisher : '') || ''),
+    };
+  }
+
+  // Source 2: Jina Reader (free, opens the page in a real browser, which gets past some store blocks)
+  async function fromJina(url) {
+    const res = await fetch('https://r.jina.ai/' + url, {
+      headers: { Accept: 'application/json', 'X-With-Images-Summary': 'true', 'X-Retain-Images': 'all' },
+    });
+    if (!res.ok) throw new Error('reader failed');
+    const d = (await res.json()).data || {};
+    const content = String(d.content || '');
+    const imgs = [];
+    if (d.images && typeof d.images === 'object') imgs.push(...Object.values(d.images));
+    for (const m of content.matchAll(/!\[[^\]]*\]\((https?:\/\/[^)\s]+)/g)) imgs.push(m[1]);
+    // Prefer pictures that look like product photos
+    const good = imgs.filter(u => !/\.svg(\?|$)|logo|icon|sprite|badge|banner|placeholder|rating|star/i.test(u));
+    good.sort((a, b) => (/product|images\/I\/|productImages|\/media\/|_\d{3,4}\./i.test(b) ? 1 : 0) - (/product|images\/I\/|productImages|\/media\/|_\d{3,4}\./i.test(a) ? 1 : 0));
+    const title = cleanTitle(d.title);
+    const desc = d.description || '';
+    return { blocked: looksBlocked(title) || looksBlocked(content.slice(0, 300)), title, desc, images: good.slice(0, 6), price: '', store: '' };
+  }
+
+  // Look up a product page's name, picture, description and price.
   // force = the Fetch button was tapped, so replace the picture even if there is one.
   async function fetchDetails(force) {
     const url = $('fUrl').value.trim();
     if (!/^https?:\/\//i.test(url)) { toast('Paste a full link starting with https://', true); return; }
     $('fetchBtn').disabled = true;
     $('fetchBtn').textContent = '…';
+    toast('Looking up that link…', false, true);
     try {
-      const q = new URLSearchParams({
-        url,
-        'data.price.selector': 'meta[property="product:price:amount"],meta[property="og:price:amount"],meta[itemprop="price"]',
-        'data.price.attr': 'content',
-        'data.currency.selector': 'meta[property="product:price:currency"],meta[property="og:price:currency"],meta[itemprop="priceCurrency"]',
-        'data.currency.attr': 'content',
-        // Amazon product pages
-        'data.amzTitle.selector': '#productTitle',
-        'data.amzHires.selector': '#landingImage,#imgBlkFront,#ebooksImgBlkFront,#main-image,img[data-a-image-name="landingImage"],#imgTagWrapperId img',
-        'data.amzHires.attr': 'data-old-hires',
-        'data.amzDynamic.selector': '#landingImage,#imgBlkFront,#ebooksImgBlkFront,img[data-a-image-name="landingImage"],#imgTagWrapperId img',
-        'data.amzDynamic.attr': 'data-a-dynamic-image',
-        'data.amzSrc.selector': '#landingImage,#imgBlkFront,#ebooksImgBlkFront,#main-image,img[data-a-image-name="landingImage"],#imgTagWrapperId img,#main-image-container img',
-        'data.amzSrc.attr': 'src',
-        'data.amzPrice.selector': '#corePrice_feature_div .a-offscreen,#corePriceDisplay_desktop_feature_div .a-offscreen,.a-price .a-offscreen',
-      });
-      const res = await fetch('https://api.microlink.io/?' + q);
-      const j = await res.json();
-      if (j.status !== 'success') throw new Error(j.message || 'lookup failed');
-      const d = j.data || {};
-      const finalUrl = d.url || url;
-      const isAmazon = /(^|\.)amazon\.|(^|\/\/)a\.co\//i.test(finalUrl) || /(^|\/\/)(www\.)?a\.co\//i.test(url);
+      const results = [];
+      try { results.push(await fromMicrolink(url)); } catch { }
+      const good = results.filter(r => !r.blocked && r.title);
+      const needImage = !good.some(r => r.images.some(u => u && !isJunkImage(u)));
+      if (!good.length || needImage) {
+        try { results.push(await fromJina(url)); } catch { }
+      }
+      const ok = results.filter(r => !r.blocked && r.title);
+      const first = (k) => (ok.find(r => r[k]) || {})[k] || '';
+      const finalUrl = (results[0] && results[0].finalUrl) || url;
 
-      const title = cleanTitle(d.amzTitle || d.title);
-      const blocked = /robot|captcha|access denied|page not found|sign in|^amazon\.com$/i.test(title);
-      if (title && !blocked && !$('fTitle').value) $('fTitle').value = title;
+      const title = first('title') || titleFromUrl(finalUrl) || titleFromUrl(url);
+      if (title && !$('fTitle').value) $('fTitle').value = title;
+      const desc = first('desc');
+      if (desc && !$('fDesc').value) $('fDesc').value = desc.slice(0, 280);
+      if (!$('fPrice').value) $('fPrice').value = first('price');
+      if (!$('fStore').value) {
+        $('fStore').value = (results[0] && results[0].isAmazon) ? 'Amazon' : (first('store') || WL.domainOf(finalUrl));
+      }
 
-      // Description: skip Amazon's, which is just the page title again
-      let desc = d.description || '';
-      if (isAmazon || /^amazon\.com\s*:/i.test(desc) || cleanTitle(desc) === title) desc = '';
-      if (desc && !blocked && !$('fDesc').value) $('fDesc').value = desc.slice(0, 280);
-
-      // Picture: try the product's own image first, then the page's share image, then Amazon's by-ASIN image
-      const asin = amazonAsin(finalUrl) || amazonAsin(url);
-      const candidates = [
-        d.amzHires,
-        biggestDynamicImage(d.amzDynamic),
-        d.amzSrc,
-        d.image && d.image.url,
-        asin && `https://ws-na.amazon-adsystem.com/widgets/q?_encoding=UTF8&ASIN=${asin}&Format=_SL500_&ID=AsinImage&MarketPlace=US&ServiceVersion=20070822&WS=1`,
-      ].filter(u => u && /^https?:\/\//i.test(u) && !isJunkImage(u));
+      // Picture: try each candidate until one actually loads
+      const candidates = [...new Set(ok.flatMap(r => r.images))]
+        .filter(u => u && /^https?:\/\//i.test(u) && !isJunkImage(u));
       const currentImg = $('fImgPreview').getAttribute('src') || '';
-      if (!blocked && (force || !currentImg || isJunkImage(currentImg))) {
+      let gotImage = false;
+      if (force || !currentImg || isJunkImage(currentImg)) {
         let img = '';
         for (const c of candidates) { img = await checkImage(c); if (img) break; }
         if (img) {
@@ -386,20 +456,20 @@
           $('fImage').value = img;
           $('fImage').dataset.repoPath = '';
           setImage(img);
+          gotImage = true;
         } else if (isJunkImage(currentImg)) {
           $('fImage').value = '';
           setImage('');
         }
       }
+      const hasImage = gotImage || !!$('fImgPreview').getAttribute('src');
 
-      if (!$('fPrice').value) $('fPrice').value = formatPrice(d.amzPrice || d.price, d.amzPrice ? '' : d.currency);
-      if (!$('fStore').value) {
-        $('fStore').value = isAmazon ? 'Amazon' : ((d.publisher && d.publisher.length < 30 ? d.publisher : '') || WL.domainOf(finalUrl));
-      }
-      if (blocked || !title) toast("That store didn't share its details. Please type a name and snap a photo.", true);
-      else if (!$('fImgPreview').getAttribute('src')) toast('Got the name ✓ No picture found, so snap a photo or paste an image link.');
+      if (!ok.length && !title) toast("That store blocks automatic lookups. Type a name, then use 🔍 Find picture or 📷 to add one.", true);
+      else if (!ok.length) toast('That store blocks lookups, so I used the name from the link. Use 🔍 Find picture to add a picture.', true);
+      else if (!hasImage) toast('Got the details ✓ No picture found, so use 🔍 Find picture or 📷.');
       else toast('Got the details ✓ Check them over, then tap Save.');
     } catch (e) {
+      console.error('fetchDetails', e);
       if (!$('fStore').value) $('fStore').value = WL.domainOf(url);
       toast("Couldn't read that page automatically. Just type a name (and add a photo if you like).", true);
     } finally {
@@ -407,6 +477,15 @@
       $('fetchBtn').textContent = 'Fetch';
     }
   }
+
+  // Opens an image search for the item in a new tab. Long-press / right-click a picture there,
+  // "Copy image address", and paste it into the image link box.
+  $('findImgBtn').addEventListener('click', () => {
+    const q = $('fTitle').value.trim() || titleFromUrl($('fUrl').value.trim());
+    if (!q) { toast('Type a name first, then tap Find picture.', true); return; }
+    window.open('https://www.google.com/search?tbm=isch&q=' + encodeURIComponent(q), '_blank', 'noopener');
+    toast('Long-press (or right-click) a picture → Copy image address, then paste it in the image link box.', false);
+  });
 
   // ---------- photos ----------
   $('photoBtn').addEventListener('click', () => $('photoInput').click());
