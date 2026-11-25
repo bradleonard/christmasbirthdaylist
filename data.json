@@ -29,18 +29,6 @@
       "added": "2026-11-25"
     },
     {
-      "id": "mwvx79qzmcsd",
-      "list": "christmas",
-      "title": "Liquid Solder Flux Dropper (30 ml/1 Oz.) I RMA Liquid Solder Flux I Soldering Flux I",
-      "url": "https://www.amazon.com/dp/B0CN29BZKV/?coliid=I2F63925B17XFN&colid=1F4JD99YRDR6W&th=1",
-      "image": "images/mwvx79qzmcsd-mwvx79qz.jpg",
-      "store": "amazon.com",
-      "price": "$7",
-      "description": "",
-      "priority": "medium",
-      "added": "2026-11-25"
-    },
-    {
       "id": "mwvwu4hfzd42",
       "list": "christmas",
       "title": "Kobalt Inline Blow Gun",
@@ -48,6 +36,18 @@
       "image": "images/mwvwu4hfzd42-mwvwu4hf.jpg",
       "store": "lowes.com",
       "price": "$13",
+      "description": "",
+      "priority": "medium",
+      "added": "2026-11-25"
+    },
+    {
+      "id": "mwvx79qzmcsd",
+      "list": "christmas",
+      "title": "Liquid Solder Flux Dropper (30 ml/1 Oz.) I RMA Liquid Solder Flux I Soldering Flux I",
+      "url": "https://www.amazon.com/dp/B0CN29BZKV/?coliid=I2F63925B17XFN&colid=1F4JD99YRDR6W&th=1",
+      "image": "images/mwvx79qzmcsd-mwvx79qz.jpg",
+      "store": "amazon.com",
+      "price": "$7",
       "description": "",
       "priority": "medium",
       "added": "2026-11-25"
