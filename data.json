@@ -17,6 +17,18 @@
   ],
   "items": [
     {
+      "id": "mwvx1tydxzty",
+      "list": "christmas",
+      "title": "AP UBIQUITI U7-LITE",
+      "url": "https://www.amazon.com/dp/B0F2GCYRGS/?coliid=I3KC2W0K0EH2SM&colid=1TQ5XF5SRKPHS&psc=1",
+      "image": "images/mwvx1tydxzty-mwvx1tyd.jpg",
+      "store": "amazon.com",
+      "price": "$125",
+      "description": "1 OR 2",
+      "priority": "medium",
+      "added": "2026-11-25"
+    },
+    {
       "id": "mwvwu4hfzd42",
       "list": "christmas",
       "title": "Kobalt Inline Blow Gun",
