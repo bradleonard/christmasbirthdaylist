@@ -381,3 +381,57 @@ dialog .dlg-foot {
   .hero { padding-top: 32px; }
 }
 dialog .status { bottom: 84px; text-align: center; width: max-content; }
+
+/* ---------- Tiles / List toggle ---------- */
+.view-toggle {
+  display: inline-flex;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--card);
+  margin-left: 6px;
+}
+.view-toggle button {
+  font: inherit;
+  font-size: .88rem;
+  border: none;
+  background: transparent;
+  color: var(--ink);
+  padding: 6px 12px;
+  cursor: pointer;
+}
+.view-toggle button + button { border-left: 1px solid var(--line); }
+.view-toggle button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); }
+
+/* ---------- List view ---------- */
+.grid.list-view {
+  grid-template-columns: 1fr;
+  max-width: 820px;
+  margin: 0 auto;
+  gap: 12px;
+}
+.grid.list-view .card {
+  flex-direction: row;
+  align-items: stretch;
+}
+.grid.list-view .card .thumb {
+  width: 140px;
+  flex: 0 0 140px;
+  aspect-ratio: auto;
+  min-height: 120px;
+}
+.grid.list-view .card .body { padding: 12px 16px; }
+.grid.list-view .card .foot { padding-top: 6px; }
+.grid.list-view .badge { font-size: .65rem; padding: 3px 7px; top: 8px; left: 8px; }
+@media (max-width: 560px) {
+  .grid.list-view .card .thumb { width: 96px; flex-basis: 96px; min-height: 96px; }
+  .grid.list-view .card .body { padding: 10px 12px; }
+  .grid.list-view .card h3 { font-size: .98rem; }
+  .grid.list-view .card .desc {
+    font-size: .86rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}

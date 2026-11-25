@@ -6,7 +6,7 @@
   <title>Wish List</title>
   <meta name="robots" content="noindex">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎁</text></svg>">
-  <link rel="stylesheet" href="assets/style.css?v=6">
+  <link rel="stylesheet" href="assets/style.css?v=7">
 </head>
 <body data-theme="christmas">
   <header class="hero wrap">
@@ -25,6 +25,10 @@
         <option value="price-desc">Price: high to low</option>
         <option value="newest">Newest added</option>
       </select>
+      <div class="view-toggle" role="group" aria-label="View">
+        <button type="button" data-view="tiles" aria-pressed="true"><span aria-hidden="true">▦</span> Tiles</button>
+        <button type="button" data-view="list" aria-pressed="false"><span aria-hidden="true">☰</span> List</button>
+      </div>
     </div>
     <section class="grid" id="grid"></section>
     <p class="empty hidden" id="empty">Nothing on this list yet. Check back soon!</p>
@@ -32,7 +36,7 @@
 
   <footer class="site" id="updated"></footer>
 
-  <script src="assets/common.js?v=6"></script>
+  <script src="assets/common.js?v=7"></script>
   <script>
     (async function () {
       const $ = (id) => document.getElementById(id);
@@ -73,6 +77,20 @@
         $('filters').classList.toggle('hidden', items.length < 2);
       }
       sortSel.addEventListener('change', render);
+
+      // Tiles / List view: from ?view=, else this visitor's last choice, else tiles
+      let view = params.get('view');
+      if (!view) { try { view = localStorage.getItem('wishlist-view'); } catch { } }
+      function setView(v) {
+        view = v === 'list' ? 'list' : 'tiles';
+        $('grid').classList.toggle('list-view', view === 'list');
+        document.querySelectorAll('.view-toggle button').forEach(b =>
+          b.setAttribute('aria-pressed', String(b.dataset.view === view)));
+        try { localStorage.setItem('wishlist-view', view); } catch { }
+      }
+      document.querySelectorAll('.view-toggle button').forEach(b =>
+        b.addEventListener('click', () => setView(b.dataset.view)));
+      setView(view);
       render();
 
       const dates = data.items.map(i => i.added).filter(Boolean).sort();
