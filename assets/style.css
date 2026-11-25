@@ -458,11 +458,18 @@ dialog .status { bottom: 84px; text-align: center; width: max-content; }
   .items.list-view .grid .card .thumb { width: 96px; flex-basis: 96px; min-height: 96px; }
   .items.list-view .grid .card .body { padding: 10px 12px; }
   .items.list-view .grid .card h3 { font-size: .98rem; }
-  .items.list-view .grid .card .desc {
-    font-size: .86rem;
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
+}
+
+/* ---------- Short names, full (smaller) notes ---------- */
+.card h3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+}
+.card .desc {
+  font-size: .82rem;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
 }

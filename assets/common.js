@@ -80,7 +80,7 @@ window.WL = (function () {
         ${wrapStart}${thumb}${wrapEnd}
         <div class="body">
           ${store ? `<div class="store">${esc(store)}</div>` : ''}
-          <h3>${esc(item.title || 'Untitled')}</h3>
+          <h3 title="${esc(item.title || '')}">${esc(item.title || 'Untitled')}</h3>
           ${item.description ? `<p class="desc">${esc(item.description)}</p>` : ''}
           <div class="foot">
             <span class="price">${esc(/^\d+(\.\d+)?$/.test(String(item.price || '').trim()) ? '$' + String(item.price).trim() : (item.price || ''))}</span>
