@@ -2,21 +2,18 @@
   "name": "Your Name",
   "activeList": "christmas",
   "lists": [
-    { "id": "christmas", "title": "Christmas 2026", "theme": "christmas", "note": "Thank you for thinking of me! Anything on here would be wonderful." },
-    { "id": "birthday", "title": "Birthday Wishes", "theme": "birthday", "note": "" }
-  ],
-  "items": [
     {
-      "id": "sample1",
-      "list": "christmas",
-      "title": "Example: Cozy wool socks",
-      "url": "https://www.smartwool.com/",
-      "image": "",
-      "store": "smartwool.com",
-      "price": "$25",
-      "description": "Size L, any dark color. This is a sample item. Delete it from the editor page.",
-      "priority": "high",
-      "added": "2026-11-25"
+      "id": "christmas",
+      "title": "Christmas 2026",
+      "theme": "christmas",
+      "note": "Thank you for thinking of me! Anything on here would be wonderful."
+    },
+    {
+      "id": "birthday",
+      "title": "Birthday Wishes",
+      "theme": "birthday",
+      "note": ""
     }
-  ]
+  ],
+  "items": []
 }
