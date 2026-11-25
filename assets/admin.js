@@ -22,6 +22,10 @@
   let toastTimer;
   function toast(msg, isError, sticky) {
     const el = $('status');
+    // Pop-up windows sit on top of everything, so put the message inside the open one
+    const dlgs = document.querySelectorAll('dialog[open]');
+    const host = dlgs.length ? dlgs[dlgs.length - 1] : document.body;
+    if (el.parentNode !== host) host.appendChild(el);
     el.textContent = msg;
     el.classList.toggle('error', !!isError);
     el.classList.remove('hidden');
@@ -809,6 +813,12 @@
       prompt('Copy this link:', url);
     }
   });
+
+  // When a pop-up closes, bring any message back out so it stays readable
+  document.querySelectorAll('dialog').forEach(d => d.addEventListener('close', () => {
+    const el = $('status');
+    if (el.parentNode === d) document.body.appendChild(el);
+  }));
 
   load();
 })();

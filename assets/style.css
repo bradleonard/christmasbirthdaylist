@@ -380,3 +380,4 @@ dialog .dlg-foot {
   .topbar h1 { font-size: 1rem; }
   .hero { padding-top: 32px; }
 }
+dialog .status { bottom: 84px; text-align: center; width: max-content; }
