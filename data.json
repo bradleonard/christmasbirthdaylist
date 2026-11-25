@@ -53,18 +53,6 @@
       "added": "2026-11-25"
     },
     {
-      "id": "mwvwhn7aot4t",
-      "list": "christmas",
-      "title": "onn 11 in Core Tablet, 128 GB, Android 16, Navy (2026 Model)",
-      "url": "https://www.walmart.com/ip/onn-11-Core-Tablet-128-GB-Android-16-Navy-2026-Model/18575603772?classType=VARIANT&athbdg=L1103&from=%2Fsearch&sid=ceed38f7-98b8-428c-8414-e7c9941dba28",
-      "image": "images/mwvwhn7aot4t-mwvwhn7a.jpg",
-      "store": "walmart.com",
-      "price": "$196",
-      "description": "onn 11 in Core Tablet, featuring 128 GB storage, Android 16, and a metal build in blue. Open box for less money would be great!",
-      "priority": "medium",
-      "added": "2026-11-25"
-    },
-    {
       "id": "mwvx79qzmcsd",
       "list": "christmas",
       "title": "Liquid Solder Flux Dropper (30 ml/1 Oz.) I RMA Liquid Solder Flux I Soldering Flux I",
@@ -73,6 +61,18 @@
       "store": "amazon.com",
       "price": "$7",
       "description": "",
+      "priority": "medium",
+      "added": "2026-11-25"
+    },
+    {
+      "id": "mwvwhn7aot4t",
+      "list": "christmas",
+      "title": "onn 11 in Core Tablet, 128 GB, Android 16, Navy (2026 Model)",
+      "url": "https://www.walmart.com/ip/onn-11-Core-Tablet-128-GB-Android-16-Navy-2026-Model/18575603772?classType=VARIANT&athbdg=L1103&from=%2Fsearch&sid=ceed38f7-98b8-428c-8414-e7c9941dba28",
+      "image": "images/mwvwhn7aot4t-mwvwhn7a.jpg",
+      "store": "walmart.com",
+      "price": "$196",
+      "description": "onn 11 in Core Tablet, featuring 128 GB storage, Android 16, and a metal build in blue. Open box for less money would be great!",
       "priority": "medium",
       "added": "2026-11-25"
     },
