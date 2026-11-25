@@ -6,7 +6,7 @@
   <title>Wish List</title>
   <meta name="robots" content="noindex">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎁</text></svg>">
-  <link rel="stylesheet" href="assets/style.css?v=8">
+  <link rel="stylesheet" href="assets/style.css?v=9">
 </head>
 <body data-theme="christmas">
   <header class="hero wrap">
@@ -20,6 +20,7 @@
     <div class="filters" id="filters">
       <label for="sort">Sort by</label>
       <select id="sort">
+        <option value="group">Grouped by price</option>
         <option value="priority">Most wanted first</option>
         <option value="price-asc">Price: low to high</option>
         <option value="price-desc">Price: high to low</option>
@@ -30,13 +31,13 @@
         <button type="button" data-view="list" aria-pressed="false"><span aria-hidden="true">☰</span> List</button>
       </div>
     </div>
-    <section class="grid" id="grid"></section>
+    <section class="items" id="grid"></section>
     <p class="empty hidden" id="empty">Nothing on this list yet. Check back soon!</p>
   </main>
 
   <footer class="site" id="updated"></footer>
 
-  <script src="assets/common.js?v=8"></script>
+  <script src="assets/common.js?v=9"></script>
   <script>
     (async function () {
       const $ = (id) => document.getElementById(id);
@@ -53,7 +54,7 @@
       const listId = params.get('list') || data.activeList || (data.lists[0] && data.lists[0].id);
       const list = data.lists.find(l => l.id === listId) || data.lists[0];
       const sortSel = $('sort');
-      sortSel.value = params.get('sort') || 'priority';
+      sortSel.value = params.get('sort') || 'group';
 
       document.body.dataset.theme = list.theme || 'plain';
       const name = (data.name || '').trim();
@@ -71,8 +72,19 @@
       }
 
       function render() {
-        const items = WL.sortItems(data.items.filter(i => i.list === list.id), sortSel.value);
-        $('grid').innerHTML = items.map(WL.cardHTML).join('');
+        const mode = sortSel.value;
+        const mine = data.items.filter(i => i.list === list.id);
+        // Grouped: top picks first, then cheapest first within each price group
+        const items = mode === 'group' ? WL.sortItems(WL.sortItems(mine, 'price-asc'), 'priority') : WL.sortItems(mine, mode);
+        if (mode === 'group') {
+          $('grid').innerHTML = WL.groupByPrice(items).map(g => `
+            <section class="price-group">
+              <h2 class="group-head">${WL.esc(g.label)} <span>${g.items.length} ${g.items.length === 1 ? 'item' : 'items'}</span></h2>
+              <div class="grid">${g.items.map(WL.cardHTML).join('')}</div>
+            </section>`).join('');
+        } else {
+          $('grid').innerHTML = `<div class="grid">${items.map(WL.cardHTML).join('')}</div>`;
+        }
         $('empty').classList.toggle('hidden', items.length > 0);
         $('filters').classList.toggle('hidden', items.length < 2);
       }

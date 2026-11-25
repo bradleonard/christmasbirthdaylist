@@ -10,9 +10,28 @@ window.WL = (function () {
     try { return new URL(url).hostname.replace(/^www\./, ''); } catch { return ''; }
   }
 
+  // First number in the price text: "$27.00" -> 27, "$1,299" -> 1299, "$20-30" -> 20
   function priceNum(p) {
-    const n = parseFloat(String(p || '').replace(/[^0-9.]/g, ''));
-    return isNaN(n) ? null : n;
+    const m = String(p || '').replace(/,/g, '').match(/\d+(\.\d+)?/);
+    return m ? parseFloat(m[0]) : null;
+  }
+
+  const PRICE_GROUPS = [
+    { label: '$10 & under', max: 10 },
+    { label: '$10 – $20', max: 20 },
+    { label: '$20 – $30', max: 30 },
+    { label: 'Over $30', max: Infinity },
+  ];
+  // [{label, items}] in price order; empty groups left out
+  function groupByPrice(items) {
+    const groups = PRICE_GROUPS.map(g => ({ label: g.label, items: [] }));
+    const none = { label: 'Price not listed', items: [] };
+    for (const it of items) {
+      const n = priceNum(it.price);
+      if (n === null) { none.items.push(it); continue; }
+      groups[PRICE_GROUPS.findIndex(g => n <= g.max)].items.push(it);
+    }
+    return groups.concat(none).filter(g => g.items.length);
   }
 
   function sortItems(items, mode) {
@@ -77,5 +96,5 @@ window.WL = (function () {
     return d.toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' });
   }
 
-  return { esc, domainOf, priceNum, sortItems, cardHTML, niceDate, safeUrl };
+  return { esc, domainOf, priceNum, groupByPrice, sortItems, cardHTML, niceDate, safeUrl };
 })();
