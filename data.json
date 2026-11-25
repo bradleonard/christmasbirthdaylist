@@ -41,18 +41,6 @@
       "added": "2026-11-25"
     },
     {
-      "id": "mwvx79qzmcsd",
-      "list": "christmas",
-      "title": "Liquid Solder Flux Dropper (30 ml/1 Oz.) I RMA Liquid Solder Flux I Soldering Flux I",
-      "url": "https://www.amazon.com/dp/B0CN29BZKV/?coliid=I2F63925B17XFN&colid=1F4JD99YRDR6W&th=1",
-      "image": "images/mwvx79qzmcsd-mwvx79qz.jpg",
-      "store": "amazon.com",
-      "price": "$7",
-      "description": "",
-      "priority": "medium",
-      "added": "2026-11-25"
-    },
-    {
       "id": "mwvwkrw5jwbt",
       "list": "christmas",
       "title": "onn 7\" Core Tablet, 64 GB, Android 16, Navy (2026 Model)",
@@ -61,6 +49,18 @@
       "store": "walmart.com",
       "price": "$88",
       "description": "Browse, stream, and handle daily tasks with the onn 7 in Core Tablet featuring Android 16, 64 GB storage, Wi-Fi 5, Bluetooth 5.0, and Google Play Protect. WAS $87 AT TIME OF ENTRY HERE",
+      "priority": "medium",
+      "added": "2026-11-25"
+    },
+    {
+      "id": "mwvx79qzmcsd",
+      "list": "christmas",
+      "title": "Liquid Solder Flux Dropper (30 ml/1 Oz.) I RMA Liquid Solder Flux I Soldering Flux I",
+      "url": "https://www.amazon.com/dp/B0CN29BZKV/?coliid=I2F63925B17XFN&colid=1F4JD99YRDR6W&th=1",
+      "image": "images/mwvx79qzmcsd-mwvx79qz.jpg",
+      "store": "amazon.com",
+      "price": "$7",
+      "description": "",
       "priority": "medium",
       "added": "2026-11-25"
     },
